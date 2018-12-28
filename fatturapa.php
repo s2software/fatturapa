@@ -1,6 +1,7 @@
 <?php
 class FatturaPA {
 	
+	const VERSION = '0.0.0';
 	protected $_node = ['FatturaElettronicaHeader' => [], 'FatturaElettronicaBody' => []];
 	
 	/**
