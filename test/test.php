@@ -106,7 +106,7 @@ echo '</pre>';
 
 // Scrive l'XML
 @mkdir('Risultato');
-$filename = $fatturapa->filename('19001');	// es. progressivo AA+NNN (univoco, alfanumerico, max 5 caratteri)
+$filename = $fatturapa->filename('00001');	// progressivo da applicare al nome file (univoco, alfanumerico, max 5 caratteri)
 $xml = $fatturapa->get_xml();
 $file = fopen('Risultato/'.$filename, 'w');
 fwrite($file, $xml);
