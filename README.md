@@ -12,7 +12,6 @@ $fatturapa = new FatturaPA('FPR12');	// Formato - https://git.io/fhm9g (default:
 - [`formato`](https://github.com/s2software/fatturapa/wiki/Costanti#formato-trasmissione) (opzionale da passare al costruttore)
 
 ### Imposta mittente (fornitore)
-
 ```php
 // Imposta mittente (fornitore)
 $fatturapa->set_mittente([
@@ -32,7 +31,6 @@ $fatturapa->set_mittente([
 - [`regimefisc`](https://github.com/s2software/fatturapa/wiki/Costanti#regime-fiscale)
 
 ### Imposta destinatario (cliente)
-
 ```php
 $fatturapa->set_destinatario([
   // Dati cliente destinatario fattura
@@ -66,40 +64,32 @@ $fatturapa->set_intestazione([
 - [`tipodoc`](https://github.com/s2software/fatturapa/wiki/Costanti#tipo-documento)
 
 ### Composizione righe dettaglio
-
 ```php
-// Aggiungi righe dettaglio
-$imp1 = 1200;
-$fatturapa->add_riga([
-  // Numero progressivo riga dettaglio
-  'num' => 1,
-  // Descrizione prodotto/servizio
-  'descrizione' => 'Realizzazione sito internet',
-  // Prezzo unitario del prodotto/servizio
-  'prezzo' => FatturaPA::dec($imp1),
-  // Quantità
-  'qta' => FatturaPA::dec(1),
-  // Prezzo totale (prezzo x qta)
-  'importo' => FatturaPA::dec($imp1), // imponibile riga
-  // % aliquota IVA
-  'perciva' => FatturaPA::dec(22),
-]);
-
-$imp2 = 300;
-$fatturapa->add_riga([
-  'num' => 2,
-  'descrizione' => 'Manutenzione sito internet',
-  'prezzo' => FatturaPA::dec($imp2),
-  'qta' => FatturaPA::dec(1),
-  'importo' => FatturaPA::dec($imp2),
-  'perciva' => FatturaPA::dec(22),
-]);
+$imp[1] = 1200;
+$imp[2] = 300;
+$impTot = 0;
+foreach ($imp as $n => $impX)
+{
+  $fatturapa->add_riga([
+    // Numero progressivo riga dettaglio
+    'num' => $n,
+    // Descrizione prodotto/servizio
+    'descrizione' => "Realizzazione sito internet $n",
+    // Prezzo unitario del prodotto/servizio
+    'prezzo' => FatturaPA::dec($impX),
+    // Quantità
+    'qta' => FatturaPA::dec(1),
+    // Prezzo totale (prezzo x qta)
+    'importo' => FatturaPA::dec($impX), // imponibile riga
+    // % aliquota IVA
+    'perciva' => FatturaPA::dec(22),
+  ]);
+  $impTot += $impX;
+}
 ```
-
 
 ### Impostazione totali
 ```php
-$impTot = $imp1 + $imp2;
 $iva = $impTot/100*22;
 $fatturapa->set_totali([
   'importo' => FatturaPA::dec($impTot), // imponibile totale
