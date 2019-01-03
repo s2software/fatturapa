@@ -6,7 +6,7 @@ Libreria SDK PHP per la generazione veloce di una Fattura elettronica in XML (fo
 ### Include e inizializza classe
 ```php
 require_once('/path/to/fatturapa.php');
-$fatturapa = new FatturaPA();
+$fatturapa = new FatturaPA('FPR12');	// Formato - https://git.io/fhm9g (default: FPR12 = Privati)
 ```
 #### Costanti
 - [`formato`](https://github.com/s2software/fatturapa/wiki/Costanti#formato-trasmissione) (opzionale da passare al costruttore)
@@ -137,10 +137,20 @@ $fatturapa->set_pagamento([
 - [`condizioni`](https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento)
 - [`modalita`](https://github.com/s2software/fatturapa/wiki/Costanti#modalit%C3%A0-pagamento)
 
+### Aggiunta libera di altri nodi nell'XML FatturaPA
+È possibile impostare/aggiungere ulteriori nodi nell'XML, rispettando le specifiche del formato [FatturaPA](https://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-2.htm).
+```php
+// Impostazione libera nodo singolo
+$fatturapa->set_node('FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono', '+39123456789');
+// Aggiunta libera a un elenco (più nodi con lo stesso nome)
+$fatturapa->add_node('FatturaElettronicaBody/DatiGenerali/DatiDDT', ['NumeroDDT' => '1', 'DataDDT' => '2019-01-07']);
+$fatturapa->add_node('FatturaElettronicaBody/DatiGenerali/DatiDDT', ['NumeroDDT' => '2', 'DataDDT' => '2019-01-10']);
+```
+
 ### Genera e salva l'XML
 ```php
 @mkdir('Risultato');
-$filename = $fatturapa->filename('00001');	// progressivo da applicare al nome file (univoco, alfanumerico, max 5 caratteri)
+$filename = $fatturapa->filename('00001'); // progressivo da applicare al nome file (univoco, alfanumerico, max 5 caratteri)
 $xml = $fatturapa->get_xml();
 $file = fopen('Risultato/'.$filename, 'w');
 fwrite($file, $xml);
