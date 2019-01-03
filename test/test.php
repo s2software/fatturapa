@@ -67,19 +67,19 @@ foreach ($imp as $n => $impX)
 }
 
 // Imposta i totali
-$iva = $impTot/100*22;
+/*$iva = $impTot/100*22;
 $fatturapa->set_totali([
 		'importo' => FatturaPA::dec($impTot),	// imponibile totale
 		'perciva' => FatturaPA::dec(22),
 		'iva' => FatturaPA::dec($iva),			// calcolo iva
 		'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
-]);
-/*$totale = $fatturapa->set_auto_totali([
-		'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
 ]);*/
+$totale = $fatturapa->set_auto_totali([
+		'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
+]);
 
 // Imposta dati pagamento (opzionale)
-$totale = $impTot+$iva;
+//$totale = $impTot+$iva;
 $fatturapa->set_pagamento([
 		// Condizioni pagamento - https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento (default: TP02 = completo)
 		'condizioni' => "TP02"
