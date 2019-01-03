@@ -203,9 +203,10 @@ class FatturaPA {
 	}
 	
 	/**
-	 * Genera automaticamente i totali
+	 * Genera automaticamente i totali raggruppati per aliquota IVA, ritorna il totale da pagare IVA inclusa
 	 * @param array $merge Merge campi calcolati con questi campi aggiuntivi
 	 * - esigiva: https://github.com/s2software/fatturapa/wiki/Costanti#esigibilita-iva
+	 * @return number
 	 */
 	public function set_auto_totali($merge)
 	{
