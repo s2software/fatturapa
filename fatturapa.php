@@ -186,6 +186,7 @@ class FatturaPA {
 	/**
 	 * Aggiunge un nodo di riepilogo (nel caso di più aliquote iva vanno aggiunti più nodi di riepilogo raggruppando per aliquota IVA)
 	 * @param array $data
+	 * - esigiva: https://github.com/s2software/fatturapa/wiki/Costanti#esigibilita-iva
 	 */
 	public function add_totali($data)
 	{
@@ -199,6 +200,44 @@ class FatturaPA {
 		$node = [];
 		$this->_fill_node($map, $data, $node);
 		$this->_add_node($path, $node);
+	}
+	
+	/**
+	 * Genera automaticamente i totali
+	 * @param array $merge Merge campi calcolati con questi campi aggiuntivi
+	 * - esigiva: https://github.com/s2software/fatturapa/wiki/Costanti#esigibilita-iva
+	 */
+	public function set_auto_totali($merge)
+	{
+		// reset eventuali totali già impostati
+		$node = &$this->_set_node('FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo', []);
+		// raggruppo
+		$righe = $this->_get_node('FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee');
+		$sommeImporti = [];	// somme importi suddivisi per aliquota iva
+		foreach ($righe as $riga)
+		{
+			$perciva = isset($riga['AliquotaIVA']) ? $riga['AliquotaIVA'] : 0;
+			$importo = isset($riga['PrezzoTotale']) ? $riga['PrezzoTotale'] : 0;
+			if (!isset($sommeImporti[$perciva]))
+			{
+				$sommeImporti[$perciva] = 0;
+			}
+			$sommeImporti[$perciva] += $importo;
+		}
+		// aggiungo un gruppo di totale per ogni diversa aliquota IVA
+		$totale = 0;
+		foreach ($sommeImporti as $perciva => $sommaImporto)
+		{
+			$iva = round($sommaImporto * $perciva / 100, 2);	// è qui che l'iva va arrotondata
+			$this->add_totali(array_merge([
+					'perciva' => FatturaPA::dec($perciva),
+					'importo' => FatturaPA::dec($sommaImporto),	// imponibile totale
+					'iva' => FatturaPA::dec($iva),			// calcolo iva
+			], $merge));
+			$totale += $sommaImporto + $iva;
+		}
+		// ritorna il totale fattura iva inclusa
+		return $totale;
 	}
 	
 	/**

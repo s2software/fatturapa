@@ -74,8 +74,12 @@ $fatturapa->set_totali([
 		'iva' => FatturaPA::dec($iva),			// calcolo iva
 		'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
 ]);
+/*$totale = $fatturapa->set_auto_totali([
+		'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
+]);*/
 
 // Imposta dati pagamento (opzionale)
+$totale = $impTot+$iva;
 $fatturapa->set_pagamento([
 		// Condizioni pagamento - https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento (default: TP02 = completo)
 		'condizioni' => "TP02"
@@ -83,13 +87,13 @@ $fatturapa->set_pagamento([
 [	// Modalità (possibile più di una) https://github.com/s2software/fatturapa/wiki/Costanti#modalit%C3%A0-pagamento
 		[
 				'modalita' => "MP05",	// bonifico
-				'totale' => FatturaPA::dec($impTot+$iva),	// totale iva inclusa
+				'totale' => FatturaPA::dec($totale),	// totale iva inclusa
 				'scadenza' => "2019-02-07",
 				'iban' => 'IT88A0123456789012345678901'
 		],
 		[
 				'modalita' => "MP08",	// carta di pagamento
-				'totale' => FatturaPA::dec($impTot+$iva),
+				'totale' => FatturaPA::dec($totale),
 				'scadenza' => "2019-02-07",
 		],
 ]
