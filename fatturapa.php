@@ -3,6 +3,7 @@ class FatturaPA {
 	
 	const VERSION = '0.0.0';
 	protected $_node = ['FatturaElettronicaHeader' => [], 'FatturaElettronicaBody' => []];
+	protected $_schema = [];	// schema .xsd (nella generazione dell'XML va rispettato anche l'ordine dei nodi)
 	
 	/**
 	 * Imposta il formato (utilizzare constanti definite in FatturaPA_Formato)
@@ -12,6 +13,7 @@ class FatturaPA {
 	public function __construct($formato = 'FPR12')
 	{
 		$this->_set_node('FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione', $formato);
+		$this->_schema = $this->_build_schema();
 	}
 	
 	/**
@@ -286,17 +288,138 @@ class FatturaPA {
 	}
 	
 	/**
+	 * Schema complexType XML FatturaPA
+	 */
+	public function get_schema()
+	{
+		return $this->_schema;
+	}
+	
+	/**
+	 * Schema XML FatturaPA (utilizza .xsd ufficiale)
+	 * Serve in quanto nella generazione della fattura va rispettato anche l'ordine dei nodi!
+	 * Ritorna un array ['FatturaElettronicaType' => [{name => 'FatturaElettronicaHeader', type => 'FatturaElettronicaHeaderType'}, ...], ...]
+	 * https://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-2.htm
+	 */
+	protected function _build_schema()
+	{
+		// https://www.phpflow.com/php/how-to-convert-xsd-into-array-using-php/
+		$doc = new DOMDocument();
+		$doc->preserveWhiteSpace = true;
+		$doc->load(self::_filepath('schema/FatturaPA_1.2.1.xsd'));
+		@mkdir(self::_filepath('tmp'));
+		$doc->save(self::_filepath('tmp/schema.xml'));
+		$xmlfile = file_get_contents(self::_filepath('tmp/schema.xml'));
+		$parseObj = str_replace($doc->lastChild->prefix.':',"",$xmlfile);
+		$obj = simplexml_load_string($parseObj);
+		$json = json_encode($obj);
+		$data = json_decode($json, TRUE);
+		// debug: visualizza albero
+		/*echo "<pre>";
+		print_r($data);
+		exit();*/
+		
+		$node_types = [];
+		// loop <xs:complexType (nodi con sottonodi)
+		foreach ($data['complexType'] as $complexType)
+		{
+			if (!empty($complexType['@attributes']['name']))	// es.: <xs:complexType name="FatturaElettronicaType">
+			{
+				$type = $complexType['@attributes']['name'];
+				$node_types[$type] = [];
+				if (!empty($complexType['sequence']))			// <xs:sequence>
+				{
+					$elements = $this->_build_schema_find_elements($complexType['sequence']);
+					foreach ($elements as $element)
+					{
+						if (!empty($element['@attributes']['name']))	// es.: <xs:element name="DatiTrasmissione" type="DatiTrasmissioneType"/>
+						{
+							$obj = (object)$element['@attributes'];		// ->name, ->type, (->minOccurs), (->maxOccurs)
+							$node_types[$type][] = $obj;
+						}
+					}
+				}
+			}
+		}
+		return $node_types;
+	}
+	
+	/**
+	 * Trova tutti gli <xs:element> nello stesso ordine in cui vengono trovati nello schema
+	 * (ricorsivo necessario ad esempio nel caso del nodo <xs:complexType name="AnagraficaType">)
+	 * @param array $sequence
+	 * @return array
+	 */
+	protected function _build_schema_find_elements($sequence)
+	{
+		$elements = [];
+		foreach ($sequence as $key => $data)
+		{
+			if ($key == 'element')
+			{
+				if (is_array($data))
+				{
+					$elements = array_merge($elements, $data);
+				}
+				else
+				{
+					$elements[] = $data;
+				}
+			}
+			elseif (is_array($data))
+			{
+				$elements = array_merge($elements, $this->_build_schema_find_elements($data));
+			}
+		}
+		return $elements;
+	}
+	
+	/**
 	 * Produce XML
 	 * @param array $node
 	 * @param string $xml
+	 * @param string $node_type Devo utilizzare lo schema dei complexType presenti nello schema XSD per mantenere lo stesso ordine dei nodi
 	 */
-	protected function _to_xml($node = NULL, $level = 1)
+	protected function _to_xml($node = NULL, $level = 1, $node_type = 'FatturaElettronicaType')
 	{
 		if ($node === NULL)
 			$node = $this->_node;
 		
 		$xml = '';
-		foreach ($node as $name => $child)
+		foreach ($this->_schema[$node_type] as $schema_child)
+		{
+			//$child_path = trim($node_path.'/'.$schema_child->name, '/');	// es.: FatturaElettronicaHeader / es.: FatturaElettronicaHeader/DatiTrasmissione
+			$name = $schema_child->name;
+			$type = $schema_child->type;
+			$child = &$this->_get_node($name, $node);	// cerca nodo corrispondente nell'albero di questa fattura
+			if ($child)	// nell'albero ho questo nodo
+			{
+				$nodes = [$child];	// un solo nodo con lo stesso nome
+				if (is_array($child) && !$this->_is_assoc($child))	// più nodi con lo stesso nome (es.: DettaglioLinee)
+				{
+					$nodes = $child;
+				}
+				$pad = str_repeat('  ', $level);
+				foreach ($nodes as $i => $sub)	// loop in caso di nodi multipli con lo stesso nome, altrimenti fa solo un giro
+				{
+					$xml .= $pad."<{$name}>";
+					if (is_array($sub))	// l'albero prosegue
+					{
+						$xml .= "\n";
+						$xml .= $this->_to_xml($sub, $level+1, $type);
+						$xml .= $pad;
+					}
+					else	// è un nodo finale: qui ho il valore
+					{
+						$xml .= htmlspecialchars($sub);
+						
+					}
+					$xml .= "</{$name}>"."\n";
+				}
+			}
+		}
+		
+		/*foreach ($node as $name => $child)
 		{
 			$nodes = [$child];
 			if (is_array($child) && !$this->_is_assoc($child))	// più nodi con lo stesso nome (es.: DettaglioLinee)
@@ -320,7 +443,9 @@ class FatturaPA {
 				}
 				$xml .= "</{$name}>"."\n";
 			}
-		}
+		}*/
+		
+		
 		return $xml;
 	}
 	
@@ -458,6 +583,16 @@ class FatturaPA {
 	protected function _is_assoc($arr)
 	{
 		return array_keys($arr) !== range(0, count($arr) - 1);
+	}
+	
+	/**
+	 * Path assoluto
+	 * @param string $path Relativo alla posizione di questo script
+	 */
+	static protected function _filepath($path)
+	{
+		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+		return __DIR__.DIRECTORY_SEPARATOR.$path;
 	}
 	
 	/**
