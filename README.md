@@ -129,7 +129,7 @@ $fatturapa->set_pagamento([
     'modalita' => "MP08",	// carta di pagamento
     'totale' => FatturaPA::dec($impTot+$iva),
     'scadenza' => "2019-02-07",
-	],
+  ],
 ]
 );
 ```
