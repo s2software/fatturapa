@@ -165,18 +165,40 @@ class FatturaPA {
 	
 	/**
 	 * Imposta i dati relativi al totale fattura
-	 * @param array $data
+	 * @param array $data Possibilità di aggiungere più totali di riepilogo raggruppando per aliquote IVA diverse
 	 * - esigiva: https://github.com/s2software/fatturapa/wiki/Costanti#esigibilita-iva
 	 */
 	public function set_totali($data)
 	{
+		if ($this->_is_assoc($data))
+		{
+			$this->add_totali($data);
+		}
+		else	// più aliquote iva
+		{
+			foreach ($data as $data1)
+			{
+				$this->add_totali($data1);
+			}
+		}
+	}
+	
+	/**
+	 * Aggiunge un nodo di riepilogo (nel caso di più aliquote iva vanno aggiunti più nodi di riepilogo raggruppando per aliquota IVA)
+	 * @param array $data
+	 */
+	public function add_totali($data)
+	{
+		$path = 'FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo';
 		$map = array(
-				'importo' => 'FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/ImponibileImporto',
-				'perciva' => 'FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/AliquotaIVA',
-				'iva' => 'FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/Imposta',
-				'esigiva' => 'FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA',
+				'importo' => 'ImponibileImporto',
+				'perciva' => 'AliquotaIVA',
+				'iva' => 'Imposta',
+				'esigiva' => 'EsigibilitaIVA',
 		);
-		$this->_fill_node($map, $data);
+		$node = [];
+		$this->_fill_node($map, $data, $node);
+		$this->_add_node($path, $node);
 	}
 	
 	/**
