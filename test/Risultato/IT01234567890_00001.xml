@@ -64,7 +64,7 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
     <DatiBeniServizi>
       <DettaglioLinee>
         <NumeroLinea>1</NumeroLinea>
-        <Descrizione>Realizzazione sito internet</Descrizione>
+        <Descrizione>Realizzazione sito internet 1</Descrizione>
         <Quantita>1.00</Quantita>
         <PrezzoUnitario>1200.00</PrezzoUnitario>
         <PrezzoTotale>1200.00</PrezzoTotale>
@@ -72,7 +72,7 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
       </DettaglioLinee>
       <DettaglioLinee>
         <NumeroLinea>2</NumeroLinea>
-        <Descrizione>Manutenzione sito internet</Descrizione>
+        <Descrizione>Realizzazione sito internet 2</Descrizione>
         <Quantita>1.00</Quantita>
         <PrezzoUnitario>300.00</PrezzoUnitario>
         <PrezzoTotale>300.00</PrezzoTotale>

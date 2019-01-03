@@ -44,33 +44,29 @@ $fatturapa->set_intestazione([
 ]);
 
 // Aggiungi righe dettaglio
-$imp1 = 1200;
-$fatturapa->add_riga([
-		// Numero progressivo riga dettaglio
-		'num' => 1,
-		// Descrizione prodotto/servizio
-		'descrizione' => 'Realizzazione sito internet',
-		// Prezzo unitario del prodotto/servizio
-		'prezzo' => FatturaPA::dec($imp1),
-		// Quantità
-		'qta' => FatturaPA::dec(1),
-		// Prezzo totale (prezzo x qta)
-		'importo' => FatturaPA::dec($imp1),	// imponibile riga
-		// % aliquota IVA
-		'perciva' => FatturaPA::dec(22),
-]);
-$imp2 = 300;
-$fatturapa->add_riga([
-		'num' => 2,
-		'descrizione' => 'Manutenzione sito internet',
-		'prezzo' => FatturaPA::dec($imp2),
-		'qta' => FatturaPA::dec(1),
-		'importo' => FatturaPA::dec($imp2),
-		'perciva' => FatturaPA::dec(22),
-]);
+$imp[1] = 1200;
+$imp[2] = 300;
+$impTot = 0;
+foreach ($imp as $n => $impX)
+{
+	$fatturapa->add_riga([
+			// Numero progressivo riga dettaglio
+			'num' => $n,
+			// Descrizione prodotto/servizio
+			'descrizione' => "Realizzazione sito internet $n",
+			// Prezzo unitario del prodotto/servizio
+			'prezzo' => FatturaPA::dec($impX),
+			// Quantità
+			'qta' => FatturaPA::dec(1),
+			// Prezzo totale (prezzo x qta)
+			'importo' => FatturaPA::dec($impX),	// imponibile riga
+			// % aliquota IVA
+			'perciva' => FatturaPA::dec(22),
+	]);
+	$impTot += $impX;
+}
 
 // Imposta i totali
-$impTot = $imp1 + $imp2;
 $iva = $impTot/100*22;
 $fatturapa->set_totali([
 		'importo' => FatturaPA::dec($impTot),	// imponibile totale
