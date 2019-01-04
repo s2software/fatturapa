@@ -366,12 +366,14 @@ class FatturaPA {
 	protected function _build_schema()
 	{
 		// https://www.phpflow.com/php/how-to-convert-xsd-into-array-using-php/
-		$doc = new DOMDocument();
-		$doc->preserveWhiteSpace = true;
-		$doc->load(self::_filepath('schema/FatturaPA_1.2.1.xsd'));
-		@mkdir(self::_filepath('tmp'));
-		$doc->save(self::_filepath('tmp/schema.xml'));
-		$xmlfile = file_get_contents(self::_filepath('tmp/schema.xml'));
+		if (!file_exists(self::_filepath('schema/schema.xml')))
+		{
+			$doc = new DOMDocument();
+			$doc->preserveWhiteSpace = true;
+			$doc->load(self::_filepath('schema/FatturaPA_1.2.1.xsd'));
+			$doc->save(self::_filepath('schema/schema.xml'));
+		}
+		$xmlfile = file_get_contents(self::_filepath('schema/schema.xml'));
 		$parseObj = str_replace($doc->lastChild->prefix.':',"",$xmlfile);
 		$obj = simplexml_load_string($parseObj);
 		$json = json_encode($obj);
