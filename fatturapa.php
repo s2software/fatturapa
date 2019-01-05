@@ -215,15 +215,18 @@ class FatturaPA {
 		// raggruppo
 		$righe = $this->_get_node('FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee');
 		$sommeImporti = [];	// somme importi suddivisi per aliquota iva
-		foreach ($righe as $riga)
+		if ($righe)
 		{
-			$perciva = isset($riga['AliquotaIVA']) ? $riga['AliquotaIVA'] : 0;
-			$importo = isset($riga['PrezzoTotale']) ? $riga['PrezzoTotale'] : 0;
-			if (!isset($sommeImporti[$perciva]))
+			foreach ($righe as $riga)
 			{
-				$sommeImporti[$perciva] = 0;
+				$perciva = isset($riga['AliquotaIVA']) ? $riga['AliquotaIVA'] : 0;
+				$importo = isset($riga['PrezzoTotale']) ? $riga['PrezzoTotale'] : 0;
+				if (!isset($sommeImporti[$perciva]))
+				{
+					$sommeImporti[$perciva] = 0;
+				}
+				$sommeImporti[$perciva] += $importo;
 			}
-			$sommeImporti[$perciva] += $importo;
 		}
 		// aggiungo un gruppo di totale per ogni diversa aliquota IVA
 		$totale = 0;
