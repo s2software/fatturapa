@@ -459,7 +459,7 @@ class FatturaPA {
 			$name = $schema_child->name;
 			$type = $schema_child->type;
 			$child = &$this->_get_node($name, $node);	// cerca nodo corrispondente nell'albero di questa fattura
-			if ($child)	// nell'albero ho questo nodo
+			if ($child !== NULL)	// nell'albero ho questo nodo
 			{
 				$nodes = [$child];	// un solo nodo con lo stesso nome
 				if (is_array($child) && !$this->_is_assoc($child))	// più nodi con lo stesso nome (es.: DettaglioLinee)
