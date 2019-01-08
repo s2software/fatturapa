@@ -1,4 +1,11 @@
 <?php
+/**
+ * PHP FatturaPA
+ * @author Storti Stefano
+ * @copyright	Copyright (c) 2019, S2 Software di Storti Stefano
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link https://github.com/s2software/fatturapa
+ */
 class FatturaPA {
 	
 	const VERSION = '0.1.0';
