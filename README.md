@@ -107,7 +107,7 @@ In caso di più aliquote IVA, è necessario impostare più totali raggruppando p
 In alternativa alla `set_totali`, possiamo automaticamente generare i totali in base alle righe aggiunte in fattura.
 ```php
 $totale = $fatturapa->set_auto_totali([
-  'esigiva' => 'I',	// Esigibilità IVA - https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva
+  'esigiva' => 'I',	// Esigibilità IVA - https://git.io/fhmDq
 ]);
 ```
 
