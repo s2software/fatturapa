@@ -11,6 +11,14 @@ $fatturapa = new FatturaPA('FPR12');	// Formato - https://git.io/fhm9g (default:
 #### Costanti
 - [`formato`](https://github.com/s2software/fatturapa/wiki/Costanti#formato-trasmissione) (opzionale da passare al costruttore)
 
+### Imposta trasmittente (opzionale, altrimenti vengono presi i dati dal mittente)
+```php
+$fatturapa->set_trasmittente([
+  'paese' => "IT",
+  'codice' => "CODFSC12A34H567U", // https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/14
+]);
+```
+
 ### Imposta mittente (fornitore)
 ```php
 // Imposta mittente (fornitore)
@@ -22,7 +30,8 @@ $fatturapa->set_mittente([
   'comune' => "Roma",
   'prov' => "RM",
   'paese' => "IT",
-  'piva' => '01234567890',
+  'piva' => "01234567890",
+  //'codfisc' => "CODFSC23A45H671U",
   // Regime fiscale - https://git.io/fhmMd (default: RF01 = ordinario)
   'regimefisc' => "RF19",
 ]);
@@ -40,10 +49,11 @@ $fatturapa->set_destinatario([
   'comune' => "Milano",
   'prov' => "MI",
   'paese' => "IT",
-  'piva' => '12345678901',
+  'piva' => "12345678901",
+  //'codfisc' => "CODFSC23A45H671U",
   // Dati SdI (Sistema di Interscambio) del destinatario/cliente
-  'sdi_codice' => '1234567',    // Codice destinatario - da impostare in alternativa alla PEC
-  'sdi_pec' => 'pec@test.com',  // PEC destinatario - da impostare in alternativa al Codice		
+  'sdi_codice' => "1234567",    // Codice destinatario - da impostare in alternativa alla PEC
+  'sdi_pec' => "pec@test.com",  // PEC destinatario - da impostare in alternativa al Codice		
 ]);
 ```
 
