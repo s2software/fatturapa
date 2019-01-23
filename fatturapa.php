@@ -31,6 +31,10 @@ class FatturaPA {
 	{
 		$map = array(
 				'paese' => 'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese',
+				// il codice si può passare tramite 'codice', 'codfisc' o 'piva'
+				// (https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/11) - In base a questo, deve essere un Codice Fiscale
+				'codice' => 'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice',
+				'codfisc' => 'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice',
 				'piva' => 'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice',
 		);
 		$this->_fill_node($map, $data);
@@ -49,15 +53,28 @@ class FatturaPA {
 		
 		// default mittente
 		$this->_set_defaults([
-				// trasmiettente - default: copia dati del mittente
-				'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese' =>
-					$this->_get_node('FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese'),
-				'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice' =>
-					$this->_get_node('FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice'),
 				// regimefisc è opzionale: default: RF01 = ordinario
 				'FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale' =>
 					'RF01',
 		]);
+		
+		// default trasmittente: codice fiscale o, se non impostato, partita iva
+		// impostando la partita iva, almeno nel mio caso, l'utility di controllo dà errore (1.1.1.2 <IdCodice> non valido)
+		// https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/11
+		$cod_trasm = $this->_get_node('FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale');
+		if (!$cod_trasm)
+		{
+			$cod_trasm = $this->_get_node('FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice');
+		}
+		$this->_set_defaults([
+				// trasmiettente - default: copia dati del mittente
+				'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese' =>
+					$this->_get_node('FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese'),
+				'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice' =>
+					$cod_trasm,
+		]);
+		
+		
 	}
 	
 	/**

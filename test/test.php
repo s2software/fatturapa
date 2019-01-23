@@ -2,6 +2,12 @@
 require_once('../fatturapa.php');
 $fatturapa = new FatturaPA();
 
+// Imposta trasmittente (opzionale, altrimenti vengono presi i dati dal mittente)
+$fatturapa->set_trasmiettente([
+		'paese' => "IT",
+		'codice' => "CODFSC12A34H567U",	// https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/14
+]);
+
 // Imposta mittente (fornitore)
 $fatturapa->set_mittente([
 		// Dati azienda emittente fattura
@@ -11,7 +17,8 @@ $fatturapa->set_mittente([
 		'comune' => "Roma",
 		'prov' => "RM",
 		'paese' => "IT",
-		'piva' => '01234567890',
+		'piva' => "01234567890",
+		//'codfisc' => "CODFSC12A34H567U",
 		// Regime fiscale - https://github.com/s2software/fatturapa/wiki/Costanti#regime-fiscale (default: RF01 = ordinario)
 		'regimefisc' => "RF01",
 ]);
@@ -25,10 +32,11 @@ $fatturapa->set_destinatario([
 		'comune' => "Milano",
 		'prov' => "MI",
 		'paese' => "IT",
-		'piva' => '12345678901',
+		'piva' => "12345678901",
+		//'codfisc' => "CODFSC23A45H671U",
 		// Dati SdI (Sistema di Interscambio) del destinatario/cliente
-		'sdi_codice' => '1234567',		// Codice destinatario - da impostare in alternativa alla PEC
-		'sdi_pec' => 'pec@test.com',	// PEC destinatario - da impostare in alternativa al Codice
+		'sdi_codice' => "1234567",		// Codice destinatario - da impostare in alternativa alla PEC
+		'sdi_pec' => "pec@test.com",	// PEC destinatario - da impostare in alternativa al Codice
 		
 ]);
 
