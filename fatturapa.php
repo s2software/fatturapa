@@ -164,6 +164,7 @@ class FatturaPA {
 				'qta' => 'Quantita',
 				'importo' => 'PrezzoTotale',
 				'perciva' => 'AliquotaIVA',
+				'natura_iva0' => 'Natura',
 		);
 		$node = [];
 		$this->_fill_node($map, $data, $node);
@@ -202,6 +203,7 @@ class FatturaPA {
 				'importo' => 'ImponibileImporto',
 				'perciva' => 'AliquotaIVA',
 				'iva' => 'Imposta',
+				'natura_iva0' => 'Natura',
 				'esigiva' => 'EsigibilitaIVA',
 		);
 		$node = [];
@@ -221,30 +223,39 @@ class FatturaPA {
 		$node = &$this->_set_node('FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo', []);
 		// raggruppo
 		$righe = $this->_get_node('FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee');
-		$sommeImporti = [];	// somme importi suddivisi per aliquota iva
+		$sommeImporti = [];	// somme importi suddivisi per aliquota iva | natura
 		if ($righe)
 		{
 			foreach ($righe as $riga)
 			{
-				$perciva = isset($riga['AliquotaIVA']) ? $riga['AliquotaIVA'] : 0;
+				$perciva = isset($riga['AliquotaIVA']) ? $riga['AliquotaIVA'] : '0.00';
+				$natura_iva0 = isset($riga['Natura']) ? $riga['Natura'] : '';
+				$key = "{$perciva}|{$natura_iva0}";
 				$importo = isset($riga['PrezzoTotale']) ? $riga['PrezzoTotale'] : 0;
-				if (!isset($sommeImporti[$perciva]))
+				if (!isset($sommeImporti[$key]))
 				{
-					$sommeImporti[$perciva] = 0;
+					$sommeImporti[$key] = 0;
 				}
-				$sommeImporti[$perciva] += $importo;
+				$sommeImporti[$key] += $importo;
 			}
 		}
 		// aggiungo un gruppo di totale per ogni diversa aliquota IVA
 		$totale = 0;
-		foreach ($sommeImporti as $perciva => $sommaImporto)
+		foreach ($sommeImporti as $key => $sommaImporto)
 		{
+			list($perciva, $natura_iva0) = explode('|', $key);
 			$iva = round($sommaImporto * $perciva / 100, 2);	// è qui che l'iva va arrotondata
+			$_merge = $merge;
+			if ($perciva == 0)	// se l'iva è 0, toglie l'eventuale merge esigiva
+			{
+				unset($_merge['esigiva']);
+			}
 			$this->add_totali(array_merge([
 					'perciva' => FatturaPA::dec($perciva),
 					'importo' => FatturaPA::dec($sommaImporto),	// imponibile totale
-					'iva' => FatturaPA::dec($iva),			// calcolo iva
-			], $merge));
+					'iva' => FatturaPA::dec($iva),				// calcolo iva
+					'natura_iva0' => $natura_iva0 ? $natura_iva0 : NULL,	// (natura iva a 0)
+			], $_merge));
 			$totale += $sommaImporto + $iva;
 		}
 		// ritorna il totale fattura iva inclusa

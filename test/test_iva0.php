@@ -13,7 +13,7 @@ $fatturapa->set_mittente([
 		'paese' => "IT",
 		'piva' => '01234567890',
 		// Regime fiscale - https://github.com/s2software/fatturapa/wiki/Costanti#regime-fiscale (default: RF01 = ordinario)
-		'regimefisc' => "RF01",
+		'regimefisc' => "RF19",
 ]);
 
 // Imposta destinatario (cliente)
@@ -61,7 +61,9 @@ foreach ($imp as $n => $impX)
 			// Prezzo totale (prezzo x qta)
 			'importo' => FatturaPA::dec($impX),	// imponibile riga
 			// % aliquota IVA
-			'perciva' => FatturaPA::dec(22),
+			'perciva' => FatturaPA::dec(0),
+			// Natura IVA non indicata - https://github.com/s2software/fatturapa/wiki/Costanti#natura-motivo-iva-non-indicata
+			'natura_iva0' => 'N2',
 	]);
 	$impTot += $impX;
 }
@@ -106,7 +108,7 @@ echo '</pre>';
 
 // Scrive l'XML
 @mkdir('Risultato');
-$filename = $fatturapa->filename('00001');	// progressivo da applicare al nome file (univoco, alfanumerico, max 5 caratteri)
+$filename = $fatturapa->filename('iva0');	// progressivo da applicare al nome file (univoco, alfanumerico, max 5 caratteri)
 $xml = $fatturapa->get_xml();
 $file = fopen('Risultato/'.$filename, 'w');
 fwrite($file, $xml);

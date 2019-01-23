@@ -23,7 +23,7 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         <Anagrafica>
           <Denominazione>La Mia Ditta Srl</Denominazione>
         </Anagrafica>
-        <RegimeFiscale>RF01</RegimeFiscale>
+        <RegimeFiscale>RF19</RegimeFiscale>
       </DatiAnagrafici>
       <Sede>
         <Indirizzo>Via Italia 12</Indirizzo>
@@ -68,7 +68,8 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         <Quantita>1.00</Quantita>
         <PrezzoUnitario>1200.00</PrezzoUnitario>
         <PrezzoTotale>1200.00</PrezzoTotale>
-        <AliquotaIVA>22.00</AliquotaIVA>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2</Natura>
       </DettaglioLinee>
       <DettaglioLinee>
         <NumeroLinea>2</NumeroLinea>
@@ -76,13 +77,14 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
         <Quantita>1.00</Quantita>
         <PrezzoUnitario>300.00</PrezzoUnitario>
         <PrezzoTotale>300.00</PrezzoTotale>
-        <AliquotaIVA>22.00</AliquotaIVA>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2</Natura>
       </DettaglioLinee>
       <DatiRiepilogo>
-        <AliquotaIVA>22.00</AliquotaIVA>
+        <AliquotaIVA>0.00</AliquotaIVA>
+        <Natura>N2</Natura>
         <ImponibileImporto>1500.00</ImponibileImporto>
-        <Imposta>330.00</Imposta>
-        <EsigibilitaIVA>I</EsigibilitaIVA>
+        <Imposta>0.00</Imposta>
       </DatiRiepilogo>
     </DatiBeniServizi>
     <DatiPagamento>
@@ -90,13 +92,13 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
       <DettaglioPagamento>
         <ModalitaPagamento>MP05</ModalitaPagamento>
         <DataScadenzaPagamento>2019-02-07</DataScadenzaPagamento>
-        <ImportoPagamento>1830.00</ImportoPagamento>
+        <ImportoPagamento>1500.00</ImportoPagamento>
         <IBAN>IT88A0123456789012345678901</IBAN>
       </DettaglioPagamento>
       <DettaglioPagamento>
         <ModalitaPagamento>MP08</ModalitaPagamento>
         <DataScadenzaPagamento>2019-02-07</DataScadenzaPagamento>
-        <ImportoPagamento>1830.00</ImportoPagamento>
+        <ImportoPagamento>1500.00</ImportoPagamento>
       </DettaglioPagamento>
     </DatiPagamento>
   </FatturaElettronicaBody>
