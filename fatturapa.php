@@ -8,7 +8,7 @@
  */
 class FatturaPA {
 	
-	const VERSION = '0.1.1';
+	const VERSION = '0.1.2';
 	protected $_node = ['FatturaElettronicaHeader' => [], 'FatturaElettronicaBody' => []];
 	protected $_schema = [];	// schema .xsd (nella generazione dell'XML va rispettato anche l'ordine dei nodi)
 	
