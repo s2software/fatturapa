@@ -1,5 +1,5 @@
 # FatturaPA
-Libreria SDK PHP per la generazione veloce di una Fattura elettronica in XML (formato FatturaPA)
+Libreria SDK PHP per la generazione veloce di una Fattura elettronica italiana in XML (formato FatturaPA)
 
 ## Esempio utilizzo
 
@@ -83,6 +83,8 @@ foreach ($imp as $n => $impX)
     'importo' => FatturaPA::dec($impX), // imponibile riga
     // % aliquota IVA
     'perciva' => FatturaPA::dec(22),
+    // (Natura IVA non indicata - https://goo.gl/93RW7v)
+    //'natura_iva0' => 'N2',
   ]);
   $impTot += $impX;
 }
@@ -96,12 +98,21 @@ $fatturapa->set_totali([
   'perciva' => FatturaPA::dec(22),
   'iva' => FatturaPA::dec($iva), // calcolo iva
   'esigiva' => 'I',              // Esigibilità IVA - https://git.io/fhmDq
+   //'natura_iva0' => 'N2',      // (Natura IVA non indicata - https://goo.gl/93RW7v)
 ]);
 ```
 #### Nota
 In caso di più aliquote IVA, è necessario impostare più totali raggruppando per aliquota: passare un array multiplo alla `set_totali` o utilizzare la `add_totali`.
 #### Costanti
 - [`esigiva`](https://github.com/s2software/fatturapa/wiki/Costanti#esigibilit%C3%A0-iva)
+
+### Impostazione automatica totali
+In alternativa alla `set_totali`, possiamo automaticamente generare i totali in base alle righe aggiunte in fattura.
+```php
+$totale = $fatturapa->set_auto_totali([
+  'esigiva' => 'I',	// Esigibilità IVA - https://git.io/fhmDq
+]);
+```
 
 ### Imposta dati pagamento (opzionale)
 ```php
