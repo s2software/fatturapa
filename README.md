@@ -15,7 +15,7 @@ $fatturapa = new FatturaPA('FPR12');	// Formato - https://git.io/fhm9g (default:
 ```php
 $fatturapa->set_trasmittente([
   'paese' => "IT",
-  'codice' => "CODFSC12A34H567U",	// https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/14
+  'codice' => "CODFSC12A34H567U", // https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/14
 ]);
 ```
 
