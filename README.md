@@ -83,6 +83,8 @@ foreach ($imp as $n => $impX)
     'importo' => FatturaPA::dec($impX), // imponibile riga
     // % aliquota IVA
     'perciva' => FatturaPA::dec(22),
+    // (Natura IVA non indicata - https://goo.gl/93RW7v)
+    //'natura_iva0' => 'N2',
   ]);
   $impTot += $impX;
 }
@@ -96,6 +98,7 @@ $fatturapa->set_totali([
   'perciva' => FatturaPA::dec(22),
   'iva' => FatturaPA::dec($iva), // calcolo iva
   'esigiva' => 'I',              // Esigibilità IVA - https://git.io/fhmDq
+   //'natura_iva0' => 'N2',      // (Natura IVA non indicata - https://goo.gl/93RW7v)
 ]);
 ```
 #### Nota
