@@ -27,7 +27,7 @@ class FatturaPA {
 	 * Imposta dati trasmittente (es.: azienda o commercialista) (opzionale: copia dati mittente)
 	 * @param array $data
 	 */
-	public function set_trasmiettente($data)
+	public function set_trasmittente($data)
 	{
 		$map = array(
 				'paese' => 'FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese',

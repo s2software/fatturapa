@@ -3,7 +3,7 @@ require_once('../fatturapa.php');
 $fatturapa = new FatturaPA();
 
 // Imposta trasmittente (opzionale, altrimenti vengono presi i dati dal mittente)
-$fatturapa->set_trasmiettente([
+$fatturapa->set_trasmittente([
 		'paese' => "IT",
 		'codice' => "CODFSC12A34H567U",	// https://forum.italia.it/t/dati-trasmittente-p-iva-o-cf/6883/14
 ]);
