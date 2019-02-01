@@ -132,6 +132,16 @@ class FatturaPA {
 						$this->_get_node('Sede/Nazione', $node)
 			], $node);
 		}
+		
+		// se è estero, toglie provincia e imposta cap a 00000
+		// "<Provincia> Da valorizzare se l'elemento informativo 1.4,3.6 <Nazione> è uguale a IT"
+		// (https://forum.italia.it/t/schema-xml-per-fatture-a-clienti-estero/5374/6)
+		if ($this->_get_node('Sede/Nazione', $node) != 'IT')
+		{
+			$sede = &$this->_get_node('Sede', $node);
+			$sede['CAP'] = '00000';
+			unset($sede['Provincia']);
+		}
 	}
 	
 	/**
@@ -552,7 +562,7 @@ class FatturaPA {
 	}
 	
 	/**
-	 * Applica default
+	 * Applica default per i nodi non impostati
 	 * @param array $defaults
 	 */
 	protected function _set_defaults($defaults, &$node = NULL)
