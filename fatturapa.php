@@ -123,6 +123,9 @@ class FatturaPA {
 		);
 		$this->_fill_node($map, $data, $node);
 		
+		// paese: default IT
+		$this->_set_defaults(['Sede/Nazione' => 'IT'], $node);
+		
 		// se è una partita iva
 		if (isset($data['piva']))
 		{
