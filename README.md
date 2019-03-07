@@ -118,7 +118,7 @@ In caso di più aliquote IVA, è necessario impostare più totali raggruppando p
 
 ### Impostazione automatica totali
 In alternativa alla `set_totali`, possiamo automaticamente generare i totali in base alle righe aggiunte in fattura.<br>
-Tramite la `set_auto_totali` è possibile anche applicare automaticamente il [marca da bollo virtuale](https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html).
+Tramite la `set_auto_totali` è anche possibile applicare automaticamente l'eventuale [marca da bollo virtuale](https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html).
 ```php
 $totale = $fatturapa->set_auto_totali([
   'esigiva' => 'I',	// Esigibilità IVA - https://git.io/fhmDq
