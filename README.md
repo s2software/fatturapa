@@ -121,7 +121,7 @@ In alternativa alla `set_totali`, possiamo automaticamente generare i totali in 
 Tramite la `set_auto_totali` è anche possibile applicare automaticamente l'eventuale [marca da bollo virtuale](https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html).
 ```php
 $totale = $fatturapa->set_auto_totali([ // Merge dati aggiuntivi
-  'esigiva' => 'I',	// esigibilità IVA - https://git.io/fhmDq
+  'esigiva' => 'I', // esigibilità IVA - https://git.io/fhmDq
 ], [ // Opzioni
   'autobollo' => TRUE // applica bollo virtuale con IVA 0 e importo > 77,47
 ]);
