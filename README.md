@@ -121,7 +121,7 @@ In alternativa alla `set_totali`, possiamo automaticamente generare i totali in 
 ```php
 $totale = $fatturapa->set_auto_totali([
   'esigiva' => 'I',	// Esigibilità IVA - https://git.io/fhmDq
-]);
+], ['autobollo' => TRUE]);  // applica bollo virtuale con IVA 0 e importo > 77,47
 ```
 
 ### Imposta dati pagamento (opzionale)
