@@ -129,25 +129,17 @@ $totale = $fatturapa->set_auto_totali([ // Merge dati aggiuntivi
 
 ### Imposta dati pagamento (opzionale)
 ```php
-// Imposta dati pagamento (opzionale)
-$fatturapa->set_pagamento([
+// Imposta dati pagamento (opzionale) - Una per ogni modalità di pagamento diversa
+$fatturapa->add_pagamento([
   // Condizioni pagamento - https://git.io/fhmD8 (default: TP02 = completo)
   'condizioni' => "TP02"
-],
-[ // Modalità (possibile più di una) https://git.io/fhmDu
-  [
-    'modalita' => "MP05",	// bonifico
+], [ // Dettaglio pagamento (in caso di più rate, è possibile passare un array di dettagli con scadenze diverse)
+    // Modalità di pagamento - https://git.io/fhmDu
+    'modalita' => "MP05", // bonifico
     'totale' => FatturaPA::dec($impTot+$iva),	// totale iva inclusa
     'scadenza' => "2019-02-07",
     'iban' => 'IT88A0123456789012345678901'
-  ],
-  [
-    'modalita' => "MP08",	// carta di pagamento
-    'totale' => FatturaPA::dec($impTot+$iva),
-    'scadenza' => "2019-02-07",
-  ],
-]
-);
+]);
 ```
 #### Costanti
 - [`condizioni`](https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento)
