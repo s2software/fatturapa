@@ -318,36 +318,55 @@ class FatturaPA {
 	}
 	
 	/**
-	 * Imposta dati pagamento (opzionale)
+	 * Imposta dati pagamento con modalità unica (opzionale) - Retrocompatibilità con v. 0.2
 	 * @param array $data
-	 * @param array $mods Modalità (possibile più di una)
 	 * - condizioni: https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento (default: TP02 = completo)
-	 * - $modes - modalita:  https://github.com/s2software/fatturapa/wiki/Costanti#modalit%C3%A0-pagamento
+	 * @param array $details Rate pagamento
+	 * - modalita: https://github.com/s2software/fatturapa/wiki/Costanti#modalit%C3%A0-pagamento
 	 */
-	public function set_pagamento($data, $modes)
+	public function set_pagamento($data, $details)
 	{
+		$this->_set_node('FatturaElettronicaBody/DatiPagamento', NULL);	// clear the prev. adds
+		$this->add_pagamento($data, $details);
+	}
+	
+	/**
+	 * Aggiunge dati pagamento (opzionale) - Una per ogni modalità di pagamento diversa
+	 * @param array $data
+	 * - condizioni: https://github.com/s2software/fatturapa/wiki/Costanti#condizioni-pagamento (default: TP02 = completo)
+	 * @param array $details Rate pagamento
+	 * - modalita: https://github.com/s2software/fatturapa/wiki/Costanti#modalit%C3%A0-pagamento
+	 */
+	public function add_pagamento($data, $details)
+	{
+		$node = [];
 		$map = array(
-				'condizioni' => 'FatturaElettronicaBody/DatiPagamento/CondizioniPagamento'
+				'condizioni' => 'CondizioniPagamento'
 		);
-		$this->_fill_node($map, $data);
+		$this->_fill_node($map, $data, $node);
+		$this->_set_defaults([
+				'CondizioniPagamento' => 'TP02',
+		], $node);
 		
-		$path = 'FatturaElettronicaBody/DatiPagamento/DettaglioPagamento';
 		$map = array(
 				'modalita' => 'ModalitaPagamento',
 				'totale' => 'ImportoPagamento',
 				'scadenza' => 'DataScadenzaPagamento',
 				'iban' => 'IBAN',
 		);
-		if ($this->_is_assoc($modes))	// assoc array to array of assoc array
+		if ($this->_is_assoc($details))	// assoc array to array of assoc array
 		{
-			$modes = [$modes];
+			$details = [$details];
 		}
-		foreach ($modes as $mode)
+		$node['DettaglioPagamento'] = [];
+		foreach ($details as $detail)
 		{
-			$node = [];
-			$this->_fill_node($map, $mode, $node);
-			$this->_add_node($path, $node);
+			$detail_node = [];
+			$this->_fill_node($map, $detail, $detail_node);
+			$node['DettaglioPagamento'][] = $detail_node;
 		}
+		
+		$this->_add_node('FatturaElettronicaBody/DatiPagamento', $node);
 	}
 	
 	/**
