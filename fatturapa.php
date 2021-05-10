@@ -514,9 +514,9 @@ class FatturaPA {
 		$elements = [];
 		foreach ($sequence as $key => $data)
 		{
-			if ($key == 'element')
+			if ($key === 'element')
 			{
-				if (is_array($data))
+				if (is_array($data) && !$this->_is_assoc($data))
 				{
 					$elements = array_merge($elements, $data);
 				}
