@@ -352,6 +352,7 @@ class FatturaPA {
 				'modalita' => 'ModalitaPagamento',
 				'totale' => 'ImportoPagamento',
 				'scadenza' => 'DataScadenzaPagamento',
+				'istituto' => 'IstitutoFinanziario',
 				'iban' => 'IBAN',
 		);
 		if ($this->_is_assoc($details))	// assoc array to array of assoc array
