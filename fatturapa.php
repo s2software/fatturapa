@@ -24,6 +24,14 @@ class FatturaPA {
 	}
 	
 	/**
+	 * Ritorna la stringa all'interno del tag CDATA. Migliore alternativa ad htmlentities in quanto non altera il testo.
+	 * @param string $string (default: "" = stringa vuota)
+	 */
+	public function add_cdata($string = ""){
+		return "<![CDATA[".$string."]]>";
+	}
+	
+	/**
 	 * Imposta dati trasmittente (es.: azienda o commercialista) (opzionale: copia dati mittente)
 	 * @param array $data
 	 */
@@ -571,7 +579,11 @@ class FatturaPA {
 					}
 					else	// è un nodo finale: qui ho il valore
 					{
-						$xml .= htmlspecialchars($sub);
+						if (strpos($sub, '<![CDATA[') !== false) {
+							$xml .= $sub;
+						}else{
+							$xml .= htmlspecialchars($sub);
+						}
 						
 					}
 					$xml .= "</{$name}>"."\n";
