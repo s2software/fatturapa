@@ -8,7 +8,7 @@
  */
 class FatturaPA {
 	
-	const VERSION = '0.3.2';
+	const VERSION = '0.3.3';
 	protected $_node = ['FatturaElettronicaHeader' => [], 'FatturaElettronicaBody' => []];
 	protected $_schema = [];	// schema .xsd (nella generazione dell'XML va rispettato anche l'ordine dei nodi)
 	
@@ -464,7 +464,7 @@ class FatturaPA {
 		// https://www.phpflow.com/php/how-to-convert-xsd-into-array-using-php/
 		$doc = new DOMDocument();
 		$doc->preserveWhiteSpace = true;
-		$doc->load(self::_filepath('schema/FatturaPA_1.2.1.xsd'));
+		$doc->load(self::_filepath('schema/FatturaPA_1.2.2.xsd'));
 		if (!file_exists(self::_filepath('schema/schema.xml')))
 		{
 			$doc->save(self::_filepath('schema/schema.xml'));
