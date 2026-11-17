@@ -8,7 +8,7 @@
  */
 class FatturaPA {
 	
-	const VERSION = '0.3.3';
+	const VERSION = '0.4.0';
 	protected $_node = ['FatturaElettronicaHeader' => [], 'FatturaElettronicaBody' => []];
 	protected $_schema = [];	// schema .xsd (nella generazione dell'XML va rispettato anche l'ordine dei nodi)
 	
@@ -153,10 +153,12 @@ class FatturaPA {
 	 * - tipodoc: https://github.com/s2software/fatturapa/wiki/Costanti#tipo-documento (default: TD01 = Fattura)
 	 * - progressivo: impostato di default allo stesso valore del campo 'numero'
 	 * - causale: opzionale (max 200 caratteri)
+	 * - totale: opzionale, importo totale documento IVA inclusa e al netto di sconti (impostato in automatico dalla set_auto_totali)
 	 */
 	public function set_intestazione($data)
 	{
 		$map = array(
+				'totale' => 'FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento',
 				'tipodoc' => 'FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento',
 				'valuta' => 'FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Divisa',
 				'data' => 'FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data',
@@ -243,17 +245,21 @@ class FatturaPA {
 	
 	/**
 	 * Genera automaticamente i totali raggruppati per aliquota IVA, ritorna il totale da pagare IVA inclusa
+	 * (al netto di eventuali sconti / maggiorazioni di documento già impostati in DatiGeneraliDocumento/ScontoMaggiorazione)
 	 * @param array $merge Merge campi calcolati con questi campi aggiuntivi
 	 * - esigiva: https://github.com/s2software/fatturapa/wiki/Costanti#esigibilita-iva
-	 * @param array $options (autobollo = FALSE / todo)
+	 * @param array $options
+	 * - autobollo (default FALSE): applica bollo virtuale con IVA 0 e importo > 77,47 (il bollo non viene sommato al totale)
+	 * - totale_documento (default TRUE): imposta il totale in DatiGeneraliDocumento/ImportoTotaleDocumento
 	 * @return number
 	 */
 	public function set_auto_totali($merge, $options = [])
 	{
 		// default options
 		$options = array_merge([
-				'autobollo' => FALSE
-		], $options);	
+				'autobollo' => FALSE,
+				'totale_documento' => TRUE,
+		], $options);
 		
 		// reset eventuali totali già impostati
 		$node = &$this->_set_node('FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo', []);
@@ -313,6 +319,28 @@ class FatturaPA {
 			}
 		}
 		
+		// sconti / maggiorazioni sul totale documento: il totale va al netto (solo se espressi come importo)
+		$sconti = $this->_get_node('FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione');
+		if ($sconti)
+		{
+			if ($this->_is_assoc($sconti))
+			{
+				$sconti = [$sconti];
+			}
+			foreach ($sconti as $sconto)
+			{
+				if (isset($sconto['Tipo'], $sconto['Importo']))
+				{
+					$totale += ($sconto['Tipo'] == 'SC' ? -1 : 1) * $sconto['Importo'];
+				}
+			}
+		}
+
+		if ($options['totale_documento'])
+		{
+			$this->_set_node('FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento', FatturaPA::dec($totale));
+		}
+
 		// ritorna il totale fattura iva inclusa
 		return $totale;
 	}

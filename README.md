@@ -68,6 +68,8 @@ $fatturapa->set_intestazione([
   // Data e numero fattura
   'data' => "2019-01-07",
   'numero' => "2019/01",
+  // Totale documento IVA inclusa (opzionale, impostato in automatico dalla set_auto_totali)
+  //'totale' => FatturaPA::dec(1830),
 ]);
 ```
 #### Costanti
@@ -118,12 +120,14 @@ In caso di più aliquote IVA, è necessario impostare più totali raggruppando p
 
 ### Impostazione automatica totali
 In alternativa alla `set_totali`, possiamo automaticamente generare i totali in base alle righe aggiunte in fattura.<br>
-Tramite la `set_auto_totali` è anche possibile applicare automaticamente l'eventuale [marca da bollo virtuale](https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html).
+La `set_auto_totali` ritorna il totale documento IVA inclusa (al netto di eventuali sconti/maggiorazioni di documento già impostati in `DatiGeneraliDocumento/ScontoMaggiorazione`) e lo imposta in `ImportoTotaleDocumento`.<br>
+Tramite la `set_auto_totali` è anche possibile applicare automaticamente l'eventuale [marca da bollo virtuale](https://www.fiscoetasse.com/approfondimenti/12090-applicazione-della-marca-da-bollo-sulle-fatture.html) (il bollo non viene sommato al totale).
 ```php
 $totale = $fatturapa->set_auto_totali([ // Merge dati aggiuntivi
   'esigiva' => 'I', // esigibilità IVA - https://git.io/fhmDq
 ], [ // Opzioni
-  'autobollo' => TRUE // applica bollo virtuale con IVA 0 e importo > 77,47
+  'autobollo' => TRUE, // applica bollo virtuale con IVA 0 e importo > 77,47
+  //'totale_documento' => FALSE, // non impostare ImportoTotaleDocumento (default: TRUE)
 ]);
 ```
 
